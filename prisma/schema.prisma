@@ -19,9 +19,9 @@ model Students {
   age             String
   monthlyFee      Int
   paymentDate     Int
+  pendingMonths   Int[]
   guardian        Guardian?
   classroom       String?    @default("noClassroom")
-  monthsInArrears Int
 }
 
 model Guardian {
