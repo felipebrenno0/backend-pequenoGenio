@@ -22,6 +22,7 @@ app.post('/alunos', async (req, res)=>{
                 age,
                 monthlyFee,
                 paymentDate: req.body.paymentDate,
+                pendingMonths,
                 guardian: {
                     create: {
                         email: guardian.email,
