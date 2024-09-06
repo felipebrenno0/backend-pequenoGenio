@@ -10,9 +10,9 @@ app.use(cors())
 
 app.post('/alunos', async (req, res)=>{
     try {
-        const { name, age, monthlyFee,paymentDate, pendingMonths, guardian } = req.body
+        const { name, age, monthlyFee,paymentDate, guardian } = req.body
 
-        if(!name || !age || !monthlyFee || !pendingMonths || !guardian || !guardian.email || !guardian.name || !guardian.number){
+        if(!name || !age || !monthlyFee || !paymentDate || !guardian || !guardian.email || !guardian.name || !guardian.number){
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
         }
 
