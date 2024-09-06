@@ -10,9 +10,9 @@ app.use(cors())
 
 app.post('/alunos', async (req, res)=>{
     try {
-        const { name, age, monthlyFee,paymentDate, guardian } = req.body
+        const { name, age, monthlyFee, paymentDate,pendingMonths, guardian } = req.body
 
-        if(!name || !age || !monthlyFee || !paymentDate || !guardian || !guardian.email || !guardian.name || !guardian.number){
+        if(!name || !age || !monthlyFee || !pendingMonths || !paymentDate || !guardian || !guardian.email || !guardian.name || !guardian.number){
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
         }
 
@@ -111,7 +111,6 @@ try {
     });
 
     res.status(200).json({message: "Usuário deletado com sucesso"});
-    console.log(res)
     }catch(error) { 
     console.error('Erro ao deletar aluno:', error);
         res.status(500).json({ error: 'Erro ao deletar aluno' });
