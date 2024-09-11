@@ -1,12 +1,47 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import cors from 'cors'
+import cron from 'node-cron';
 
 const prisma = new PrismaClient()
 
 const app = express()
 app.use(express.json())
 app.use(cors())
+
+// Executa todos os dias à meia-noite
+cron.schedule('0 0 * * *', async()=>{
+    try {
+        const today = new Date().getDate();
+        const currentMonth = new Date().getMonth() + 1
+
+        const alunos = await prisma.students.findMany({
+            where: {
+                paymentDate: today
+            }
+        });
+
+        for (let aluno of alunos) {
+            if (!aluno.pendingMonths.includes(currentMonth)){
+                await prisma.students.update({
+                    where: {
+                        id: aluno.id
+                    },
+                    data: {
+                        pendingMonths:{
+                            push: currentMonth
+                        }
+                    }
+                });
+            }
+        }
+        console.log('Pending months updated for users with paymentDate matching today')
+
+    } catch (error){
+        console.error('Erro ao atualizar pendingMonhts', error)
+    }
+})
+
 
 app.post('/alunos', async (req, res)=>{
     try {
@@ -21,7 +56,7 @@ app.post('/alunos', async (req, res)=>{
                 name,
                 age,
                 monthlyFee,
-                paymentDate: req.body.paymentDate,
+                paymentDate,
                 pendingMonths,
                 guardian: {
                     create: {
@@ -54,7 +89,6 @@ app.get('/alunos', async (req, res)=>{
                 guardianId: req.query.guardianId,
                 classroom: req.query.classroom,
                 paymentStatus: req.query.paymentStatus,
-                monthsInArrears: req.query.monthsInArrears,
 
             }, include: {
                 guardian: true
