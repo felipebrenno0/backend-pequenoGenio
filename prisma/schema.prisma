@@ -14,21 +14,22 @@ datasource db {
 }
 
 model Students {
-  id              String     @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  age             String
-  monthlyFee      Int
-  paymentDate     Int
-  pendingMonths   Int[]
-  guardian        Guardian?
-  classroom       String?    @default("noClassroom")
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  status        Boolean   @default(true)
+  name          String
+  age           String
+  monthlyFee    Int
+  paymentDate   Int
+  pendingMonths Int[]
+  guardian      Guardian?
+  classroom     String?   @default("noClassroom")
 }
 
 model Guardian {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  name    String
-  number  String
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  name      String
+  number    String
   student   Students? @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String ?  @unique @db.ObjectId
+  studentId String?   @unique @db.ObjectId
 }
