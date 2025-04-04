@@ -45,7 +45,7 @@ cron.schedule('0 0 * * *', async()=>{
 
 app.post('/alunos', async (req, res)=>{
     try {
-        const { name, age, monthlyFee, paymentDate,pendingMonths, guardian } = req.body
+        const { name, status, age, monthlyFee, paymentDate,pendingMonths, guardian } = req.body
 
         if(!name || !age || !monthlyFee || !pendingMonths || !paymentDate || !guardian || !guardian.email || !guardian.name || !guardian.number){
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
@@ -54,6 +54,7 @@ app.post('/alunos', async (req, res)=>{
         const novoAluno = await prisma.students.create({
             data: {
                 name,
+                status,
                 age,
                 monthlyFee,
                 paymentDate,
@@ -83,6 +84,7 @@ app.get('/alunos', async (req, res)=>{
         students = await prisma.students.findMany({
             where: {
                 name: req.query.name,
+                status: req.query.status,
                 age: req.query.age,
                 monthlyFee: req.query.monthlyFee,
                 paymentDate: req.query.paymentDate,
@@ -116,7 +118,7 @@ app.patch('/alunos/:id', async (req, res) => {
                 paymentDate,
                 classroom,
                 paymentStatus,
-                monthsInArrears,
+                pendingMonths,
                 guardian: guardian ? {
                     update: {
                         email: guardian.email,
