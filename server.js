@@ -169,6 +169,44 @@ app.patch('/alunos/:id/remove-first-pending', async (req, res) => {
     }
 });
 
+// Exemplo no seu controller ou rota
+app.patch('/alunos/:id/add-pending-month', async (req, res) => {
+    const { id } = req.params;
+    const { month } = req.body;
+  
+    if (!month || typeof month !== 'number' || month < 1 || month > 12) {
+      return res.status(400).json({ error: 'Mês inválido' });
+    }
+  
+    try {
+      const student = await prisma.students.findUnique({ where: { id } });
+  
+      if (!student) {
+        return res.status(404).json({ error: 'Aluno não encontrado' });
+      }
+  
+      // Já tem esse mês na lista?
+      if (student.pendingMonths.includes(month)) {
+        return res.status(400).json({ error: 'Esse mês já está na lista de pendências' });
+      }
+  
+      const updatedStudent = await prisma.students.update({
+        where: { id },
+        data: {
+          pendingMonths: {
+            push: month
+          }
+        }
+      });
+  
+      res.json(updatedStudent);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao adicionar dívida' });
+    }
+  });
+  
+
 app.delete('/alunos/:id', async (req, res)=>{
 
     const {id} = req.params
