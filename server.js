@@ -90,7 +90,7 @@ app.get('/alunos', async (req, res)=>{
                 paymentDate: req.query.paymentDate,
                 guardianId: req.query.guardianId,
                 classroom: req.query.classroom,
-                paymentStatus: req.query.paymentStatus,
+                pendingMonths: req.query.pendingMonths,
 
             }, include: {
                 guardian: true
@@ -105,7 +105,7 @@ app.get('/alunos', async (req, res)=>{
 app.patch('/alunos/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, age, monthlyFee, paymentDate, classroom, paymentStatus, monthsInArrears, guardian } = req.body;
+        const { name, age, monthlyFee, paymentDate, classroom, pendingMonths, guardian } = req.body;
 
         const updatedStudent = await prisma.students.update({
             where: {
@@ -117,7 +117,6 @@ app.patch('/alunos/:id', async (req, res) => {
                 monthlyFee,
                 paymentDate,
                 classroom,
-                paymentStatus,
                 pendingMonths,
                 guardian: guardian ? {
                     update: {
