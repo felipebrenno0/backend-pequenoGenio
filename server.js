@@ -136,6 +136,40 @@ app.patch('/alunos/:id', async (req, res) => {
     }
 });
 
+app.patch('/alunos/:id/remove-first-pending', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Buscar o estudante no banco
+        const student = await prisma.students.findUnique({
+            where: { id },
+            select: { pendingMonths: true }
+        });
+
+        if (!student) {
+            return res.status(404).json({ error: "Estudante não encontrado." });
+        }
+
+        if (student.pendingMonths.length === 0) {
+            return res.status(400).json({ error: "O estudante não tem meses pendentes." });
+        }
+
+        // Remover o primeiro número do array
+        const updatedPendingMonths = student.pendingMonths.slice(1);
+
+        // Atualizar no banco
+        const updatedStudent = await prisma.students.update({
+            where: { id },
+            data: { pendingMonths: updatedPendingMonths }
+        });
+
+        res.status(200).json(updatedStudent);
+    } catch (error) {
+        console.error("Erro ao atualizar aluno:", error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+    }
+});
+
 app.delete('/alunos/:id', async (req, res)=>{
 
     const {id} = req.params
